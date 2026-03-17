@@ -181,6 +181,7 @@
   justify-content: space-between;
   color: var(--text-strong);
   cursor: pointer;
+  text-decoration: none;
   transition:
     background-color 0.18s ease,
     transform 0.18s ease;
@@ -206,6 +207,79 @@
   border: 0;
   background: rgba(15, 23, 42, 0.08);
   z-index: 20;
+}
+
+.calendar-panel {
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.4), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(246, 249, 255, 0.8));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+  padding: 30px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.calendar-meta {
+  color: var(--muted);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.calendar-grid-labels {
+  margin-top: 24px;
+}
+
+.calendar-grid-days {
+  margin-top: 12px;
+}
+
+.calendar-week-label {
+  padding: 8px 10px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.calendar-day {
+  min-height: 110px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.54);
+  padding: 14px;
+}
+
+.calendar-day.is-muted {
+  opacity: 0.45;
+}
+
+.calendar-day.is-today {
+  background: rgba(37, 99, 235, 0.1);
+  border-color: rgba(96, 165, 250, 0.42);
+}
+
+.calendar-day-number {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-strong);
+  font-weight: 700;
 }
 
 .app-shell::before,
@@ -336,6 +410,14 @@
   gap: 20px;
 }
 
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .filter-group {
   display: flex;
   gap: 8px;
@@ -375,6 +457,7 @@
 
 .primary-button,
 .ghost-button,
+.danger-button,
 .check-button,
 .delete-button {
   border: 1px solid transparent;
@@ -390,7 +473,8 @@
 }
 
 .primary-button,
-.ghost-button {
+.ghost-button,
+.danger-button {
   min-height: 56px;
   padding: 0 18px;
 }
@@ -407,6 +491,17 @@
   color: var(--text-strong);
 }
 
+.danger-button {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(248, 113, 113, 0.24);
+  color: #b91c1c;
+}
+
+.danger-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .ghost-button.active {
   background: rgba(37, 99, 235, 0.12);
   color: var(--accent-strong);
@@ -420,6 +515,7 @@
 }
 
 .ghost-button:hover,
+.danger-button:hover,
 .check-button:hover,
 .delete-button:hover {
   transform: translateY(-2px);
@@ -560,14 +656,16 @@
   }
 
   .hero-panel,
-  .todo-panel {
+  .todo-panel,
+  .calendar-panel {
     border-radius: 24px;
     padding: 20px;
   }
 
   .summary-grid,
   .composer,
-  .todo-item {
+  .todo-item,
+  .calendar-grid {
     grid-template-columns: 1fr;
   }
 
@@ -576,12 +674,18 @@
     flex-direction: column;
   }
 
+  .panel-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   .summary-card strong {
     font-size: 28px;
   }
 
   .primary-button,
   .ghost-button,
+  .danger-button,
   .check-button,
   .delete-button {
     min-height: 48px;

@@ -18,6 +18,7 @@ type TodoStore = {
   addTodo: () => void
   toggleTodo: (id: number) => void
   removeTodo: (id: number) => void
+  clearOpenTodos: () => void
 }
 
 const initialTodos: Todo[] = [
@@ -88,6 +89,10 @@ export const useTodoStore = create<TodoStore>()(
       removeTodo: (id) =>
         set((state) => ({
           todos: state.todos.filter((todo) => todo.id !== id),
+        })),
+      clearOpenTodos: () =>
+        set((state) => ({
+          todos: state.todos.filter((todo) => todo.done),
         })),
     }),
     {

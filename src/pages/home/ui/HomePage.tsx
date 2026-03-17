@@ -1,7 +1,5 @@
-import { useState } from 'react'
 import type { FormEvent } from 'react'
 import HeroSummary from '../../../widgets/hero-summary/ui/HeroSummary'
-import SidebarMenu from '../../../widgets/sidebar/ui/SidebarMenu'
 import TodoComposer from '../../../features/todo-create/ui/TodoComposer'
 import TodoHeader from '../../../features/todo-filter/ui/TodoHeader'
 import TodoList from '../../../entities/todo/ui/TodoList'
@@ -13,7 +11,6 @@ import {
 } from '../../../entities/todo/model/store'
 
 function HomePage() {
-  const [isSidebarPinned, setIsSidebarPinned] = useState(false)
   const todos = useTodoStore((state) => state.todos)
   const draft = useTodoStore((state) => state.draft)
   const filter = useTodoStore((state) => state.filter)
@@ -22,9 +19,9 @@ function HomePage() {
   const addTodo = useTodoStore((state) => state.addTodo)
   const toggleTodo = useTodoStore((state) => state.toggleTodo)
   const removeTodo = useTodoStore((state) => state.removeTodo)
+  const clearOpenTodos = useTodoStore((state) => state.clearOpenTodos)
 
   const openCount = getOpenCount(todos)
-  const completedCount = todos.length - openCount
   const visibleTodos = getVisibleTodos(todos, filter)
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -32,37 +29,49 @@ function HomePage() {
     addTodo()
   }
 
+  const handleClearOpenTodos = () => {
+    if (openCount === 0) {
+      return
+    }
+
+    const shouldClear = window.confirm(
+      `열린 작업 ${openCount}개를 모두 삭제할까요?`,
+    )
+
+    if (!shouldClear) {
+      return
+    }
+
+    clearOpenTodos()
+  }
+
   return (
-    <div className={`app-layout${isSidebarPinned ? ' sidebar-pinned' : ''}`}>
-      <SidebarMenu
-        totalCount={todos.length}
+    <main className="app-shell">
+      <HeroSummary
         openCount={openCount}
-        completedCount={completedCount}
-        onPinnedChange={setIsSidebarPinned}
+        totalCount={todos.length}
+        filterLabel={getFilterLabel(filter)}
       />
 
-      <main className="app-shell">
-        <HeroSummary
+      <section className="todo-panel">
+        <TodoHeader
+          filter={filter}
           openCount={openCount}
-          totalCount={todos.length}
-          filterLabel={getFilterLabel(filter)}
+          onChangeFilter={setFilter}
+          onClearOpenTodos={handleClearOpenTodos}
         />
-
-        <section className="todo-panel">
-          <TodoHeader filter={filter} onChangeFilter={setFilter} />
-          <TodoComposer
-            draft={draft}
-            onDraftChange={setDraft}
-            onSubmit={handleSubmit}
-          />
-          <TodoList
-            todos={visibleTodos}
-            onToggleTodo={toggleTodo}
-            onRemoveTodo={removeTodo}
-          />
-        </section>
-      </main>
-    </div>
+        <TodoComposer
+          draft={draft}
+          onDraftChange={setDraft}
+          onSubmit={handleSubmit}
+        />
+        <TodoList
+          todos={visibleTodos}
+          onToggleTodo={toggleTodo}
+          onRemoveTodo={removeTodo}
+        />
+      </section>
+    </main>
   )
 }
 

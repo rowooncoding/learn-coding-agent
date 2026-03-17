@@ -1,16 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import { NavLink } from 'react-router-dom'
 
 type SidebarMenuProps = {
-  totalCount: number
   openCount: number
-  completedCount: number
   onPinnedChange: (isPinnedOpen: boolean) => void
 }
 
 function SidebarMenu({
-  totalCount,
   openCount,
-  completedCount,
   onPinnedChange,
 }: SidebarMenuProps) {
   const [isPinnedOpen, setIsPinnedOpen] = useState(false)
@@ -87,22 +84,17 @@ function SidebarMenu({
           </div>
 
           <nav className="sidebar-nav" aria-label="주요 메뉴">
-            <button type="button" className="sidebar-item active">
-              <span>Inbox</span>
+            <NavLink to="/" end className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>
+              <span>오늘 할 일</span>
               <em>{openCount}</em>
-            </button>
-            <button type="button" className="sidebar-item">
-              <span>Today</span>
-              <em>{totalCount}</em>
-            </button>
-            <button type="button" className="sidebar-item">
-              <span>All Tasks</span>
-              <em>{totalCount}</em>
-            </button>
-            <button type="button" className="sidebar-item">
-              <span>Completed</span>
-              <em>{completedCount}</em>
-            </button>
+            </NavLink>
+            <NavLink
+              to="/calendar"
+              className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}
+            >
+              <span>Calendar</span>
+              <em>View</em>
+            </NavLink>
           </nav>
         </aside>
       </div>
