@@ -1,3 +1,7 @@
+.app-layout {
+  min-height: 100vh;
+}
+
 .app-shell {
   position: relative;
   width: min(980px, calc(100% - 32px));
@@ -5,6 +9,203 @@
   padding: 56px 0 72px;
   display: grid;
   gap: 28px;
+}
+
+.sidebar-shell {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 30;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.sidebar-toggle {
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.sidebar-shell.is-pinned .sidebar-toggle {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.92);
+}
+
+.sidebar-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--text-strong);
+}
+
+.sidebar-panel {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateX(-10px);
+  transition:
+    width 0.22s ease,
+    opacity 0.18s ease,
+    transform 0.22s ease;
+  border: 1px solid transparent;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.12);
+}
+
+.sidebar-shell.is-open .sidebar-panel {
+  width: 248px;
+  opacity: 1;
+  transform: translateX(0);
+  border-color: rgba(148, 163, 184, 0.22);
+}
+
+.sidebar-shell.is-pinned .sidebar-panel {
+  width: 280px;
+  min-height: 100vh;
+  transform: translateX(0);
+  border-color: rgba(148, 163, 184, 0.22);
+  border-radius: 0;
+  border-left: 0;
+  border-top: 0;
+  border-bottom: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(244, 248, 255, 0.86));
+  box-shadow:
+    inset -1px 0 0 rgba(148, 163, 184, 0.14);
+}
+
+.sidebar-shell.is-pinned {
+  top: 0;
+  left: 0;
+  gap: 0;
+}
+
+.sidebar-shell.is-pinned .sidebar-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.app-layout.sidebar-pinned .app-shell {
+  width: min(980px, calc(100% - 344px));
+  margin-left: auto;
+  margin-right: auto;
+  transform: translateX(140px);
+}
+
+.sidebar-header {
+  padding: 18px 18px 10px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sidebar-kicker {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sidebar-header strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 18px;
+  color: var(--text-strong);
+  letter-spacing: -0.03em;
+}
+
+.sidebar-close {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(37, 99, 235, 0.08);
+  cursor: pointer;
+}
+
+.sidebar-close span {
+  position: absolute;
+  top: 16px;
+  left: 9px;
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--text-strong);
+}
+
+.sidebar-close span:first-child {
+  transform: rotate(45deg);
+}
+
+.sidebar-close span:last-child {
+  transform: rotate(-45deg);
+}
+
+.sidebar-shell:not(.is-pinned) .sidebar-close {
+  display: none;
+}
+
+.sidebar-nav {
+  padding: 8px 10px 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.sidebar-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  border-radius: 14px;
+  padding: 12px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-strong);
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.sidebar-item em {
+  font-style: normal;
+  color: var(--muted);
+}
+
+.sidebar-item:hover {
+  background: rgba(37, 99, 235, 0.08);
+  transform: translateX(2px);
+}
+
+.sidebar-item.active {
+  background: rgba(37, 99, 235, 0.12);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 23, 42, 0.08);
+  z-index: 20;
 }
 
 .app-shell::before,
@@ -335,7 +536,27 @@
 @media (max-width: 720px) {
   .app-shell {
     width: min(100% - 20px, 980px);
-    padding: 24px 0 40px;
+    padding: 88px 0 40px;
+  }
+
+  .sidebar-shell {
+    top: 12px;
+    left: 12px;
+  }
+
+  .sidebar-shell.is-open .sidebar-panel {
+    width: min(248px, calc(100vw - 76px));
+  }
+
+  .sidebar-shell.is-pinned .sidebar-panel {
+    width: min(280px, calc(100vw - 76px));
+    min-height: auto;
+  }
+
+  .app-layout.sidebar-pinned .app-shell {
+    width: min(100% - 20px, 980px);
+    margin: 0 auto;
+    transform: none;
   }
 
   .hero-panel,
