@@ -1,3 +1,4 @@
+import { Button, Input } from 'antd'
 import type { FormEvent } from 'react'
 
 type TodoComposerProps = {
@@ -16,15 +17,21 @@ function TodoComposer({
       <label className="sr-only" htmlFor="todo-input">
         새 작업
       </label>
-      <input
+      <Input
         id="todo-input"
+        size="large"
         value={draft}
         onChange={(event) => onDraftChange(event.target.value)}
         placeholder="예: 장보기, 문서 정리, 운동 가기"
       />
-      <button type="submit" className="primary-button">
+      <Button
+        type="primary"
+        htmlType="submit"
+        size="large"
+        className="primary-button"
+      >
         추가
-      </button>
+      </Button>
     </form>
   )
 }

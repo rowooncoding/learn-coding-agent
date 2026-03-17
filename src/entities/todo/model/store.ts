@@ -19,11 +19,14 @@ type TodoStore = {
   todos: Todo[]
   draft: string
   filter: TodoFilter
+  userId: string | null
   isLoading: boolean
   hasLoaded: boolean
   setDraft: (draft: string) => void
   setFilter: (filter: TodoFilter) => void
-  startTodosSubscription: () => () => void
+  setUserId: (userId: string | null) => void
+  resetTodos: () => void
+  startTodosSubscription: (userId: string) => () => void
   addTodo: () => Promise<void>
   toggleTodo: (id: string) => Promise<void>
   removeTodo: (id: string) => Promise<void>
@@ -61,14 +64,27 @@ export const useTodoStore = create<TodoStore>()((set, get) => ({
   todos: [],
   draft: '',
   filter: 'all',
+  userId: null,
   isLoading: true,
   hasLoaded: false,
   setDraft: (draft) => set({ draft }),
   setFilter: (filter) => set({ filter }),
-  startTodosSubscription: () => {
+  setUserId: (userId) => set({ userId }),
+  resetTodos: () =>
+    set({
+      todos: [],
+      draft: '',
+      filter: 'all',
+      userId: null,
+      isLoading: false,
+      hasLoaded: false,
+    }),
+  startTodosSubscription: (userId) => {
+    set({ isLoading: true, userId })
+
     set({ isLoading: true })
 
-    return subscribeTodos((todos) => {
+    return subscribeTodos(userId, (todos) => {
       set({
         todos,
         isLoading: false,
@@ -77,26 +93,38 @@ export const useTodoStore = create<TodoStore>()((set, get) => ({
     })
   },
   addTodo: async () => {
+    const userId = get().userId
     const title = get().draft.trim()
-    if (!title) {
+    if (!title || !userId) {
       return
     }
 
-    await createTodo(title)
+    await createTodo(userId, title)
     set({ draft: '' })
   },
   toggleTodo: async (id) => {
+    const userId = get().userId
     const todo = get().todos.find((currentTodo) => currentTodo.id === id)
-    if (!todo) {
+    if (!todo || !userId) {
       return
     }
 
-    await updateTodoDone(id, !todo.done)
+    await updateTodoDone(userId, id, !todo.done)
   },
   removeTodo: async (id) => {
-    await deleteTodo(id)
+    const userId = get().userId
+    if (!userId) {
+      return
+    }
+
+    await deleteTodo(userId, id)
   },
   clearOpenTodos: async () => {
-    await deleteOpenTodos(get().todos)
+    const userId = get().userId
+    if (!userId) {
+      return
+    }
+
+    await deleteOpenTodos(userId, get().todos)
   },
 }))

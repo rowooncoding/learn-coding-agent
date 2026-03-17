@@ -1,33 +1,34 @@
-const weekLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+import { Select } from 'antd'
+import dayjs from 'dayjs'
+import { useState } from 'react'
 
-const buildCalendarDays = (date: Date) => {
-  const year = date.getFullYear()
-  const month = date.getMonth()
-  const firstDay = new Date(year, month, 1)
-  const startOffset = firstDay.getDay()
+const monthOptions = Array.from({ length: 12 }, (_, index) => ({
+  label: dayjs().month(index).format('MMM'),
+  value: index,
+}))
 
-  return Array.from({ length: 42 }, (_, index) => {
-    const dayNumber = index - startOffset + 1
-    const current = new Date(year, month, dayNumber)
-    const isCurrentMonth = current.getMonth() === month
-    const isToday = current.toDateString() === new Date().toDateString()
+const yearOptions = Array.from({ length: 9 }, (_, index) => {
+  const year = dayjs().year() - 4 + index
 
-    return {
-      key: `${current.getFullYear()}-${current.getMonth()}-${current.getDate()}`,
-      label: current.getDate(),
-      isCurrentMonth,
-      isToday,
-    }
-  })
-}
+  return {
+    label: `${year}`,
+    value: year,
+  }
+})
 
 function CalendarView() {
-  const today = new Date()
-  const title = today.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-  })
-  const days = buildCalendarDays(today)
+  const [currentValue, setCurrentValue] = useState(() => dayjs())
+  const title = currentValue.format('YYYY년 M월')
+  const daysInMonth = currentValue.daysInMonth()
+  const days = Array.from({ length: daysInMonth }, (_, index) => index + 1)
+
+  const handleYearChange = (year: number) => {
+    setCurrentValue((current) => current.year(year))
+  }
+
+  const handleMonthChange = (month: number) => {
+    setCurrentValue((current) => current.month(month))
+  }
 
   return (
     <section className="calendar-panel">
@@ -36,24 +37,29 @@ function CalendarView() {
           <p className="section-kicker">Calendar</p>
           <h2>{title}</h2>
         </div>
-        <p className="calendar-meta">월간 보기</p>
+        <div className="calendar-controls">
+          <Select
+            value={currentValue.year()}
+            options={yearOptions}
+            onChange={handleYearChange}
+            className="calendar-select"
+          />
+          <Select
+            value={currentValue.month()}
+            options={monthOptions}
+            onChange={handleMonthChange}
+            className="calendar-select"
+          />
+        </div>
       </div>
 
-      <div className="calendar-grid calendar-grid-labels">
-        {weekLabels.map((label) => (
-          <span key={label} className="calendar-week-label">
-            {label}
-          </span>
-        ))}
-      </div>
-
-      <div className="calendar-grid calendar-grid-days">
+      <div className="calendar-grid">
         {days.map((day) => (
           <article
-            key={day.key}
-            className={`calendar-day${day.isCurrentMonth ? '' : ' is-muted'}${day.isToday ? ' is-today' : ''}`}
+            key={`${currentValue.year()}-${currentValue.month()}-${day}`}
+            className={`calendar-cell${day === currentValue.date() ? ' is-current' : ''}`}
           >
-            <span className="calendar-day-number">{day.label}</span>
+            <span className="calendar-day-number">{day}</span>
           </article>
         ))}
       </div>

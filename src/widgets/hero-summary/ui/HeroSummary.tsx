@@ -2,6 +2,7 @@ type HeroSummaryProps = {
   openCount: number
   totalCount: number
   filterLabel: string
+  userLabel?: string
   title?: string
   description?: string
   showSummary?: boolean
@@ -11,6 +12,7 @@ function HeroSummary({
   openCount,
   totalCount,
   filterLabel,
+  userLabel,
   title = '오늘 할 일',
   description = '바로 추가하고, 체크하고, 지우는 데만 집중한 간단한 todo list입니다.',
   showSummary = true,
@@ -21,6 +23,7 @@ function HeroSummary({
       <div className="hero-copy">
         <h1>{title}</h1>
         <p>{description}</p>
+        {userLabel ? <span className="hero-user">{userLabel}</span> : null}
       </div>
 
       {showSummary ? (

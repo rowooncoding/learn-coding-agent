@@ -4,11 +4,15 @@ import { NavLink } from 'react-router-dom'
 type SidebarMenuProps = {
   openCount: number
   onPinnedChange: (isPinnedOpen: boolean) => void
+  userName: string
+  onSignOut: () => Promise<void>
 }
 
 function SidebarMenu({
   openCount,
   onPinnedChange,
+  userName,
+  onSignOut,
 }: SidebarMenuProps) {
   const [isPinnedOpen, setIsPinnedOpen] = useState(false)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
@@ -71,6 +75,7 @@ function SidebarMenu({
             <div>
               <p className="sidebar-kicker">Workspace</p>
               <strong>Agent Todo</strong>
+              <span className="sidebar-user">{userName}</span>
             </div>
             <button
               type="button"
@@ -84,7 +89,7 @@ function SidebarMenu({
           </div>
 
           <nav className="sidebar-nav" aria-label="주요 메뉴">
-            <NavLink to="/" end className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>
+            <NavLink to="/todo" end className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>
               <span>오늘 할 일</span>
               <em>{openCount}</em>
             </NavLink>
@@ -96,6 +101,12 @@ function SidebarMenu({
               <em>View</em>
             </NavLink>
           </nav>
+
+          <div className="sidebar-footer">
+            <button type="button" className="sidebar-signout" onClick={() => void onSignOut()}>
+              로그아웃
+            </button>
+          </div>
         </aside>
       </div>
 

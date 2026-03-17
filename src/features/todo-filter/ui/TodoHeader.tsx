@@ -1,3 +1,4 @@
+import { Button, Segmented } from 'antd'
 import type { TodoFilter } from '../../../entities/todo/model/store'
 
 type TodoHeaderProps = {
@@ -20,38 +21,23 @@ function TodoHeader({
         <h2>오늘의 todo list</h2>
       </div>
       <div className="panel-actions">
-        <div className="filter-group" role="tablist" aria-label="할 일 필터">
-          <button
-            type="button"
-            className={`ghost-button${filter === 'all' ? ' active' : ''}`}
-            onClick={() => onChangeFilter('all')}
-          >
-            전체
-          </button>
-          <button
-            type="button"
-            className={`ghost-button${filter === 'active' ? ' active' : ''}`}
-            onClick={() => onChangeFilter('active')}
-          >
-            진행중
-          </button>
-          <button
-            type="button"
-            className={`ghost-button${filter === 'done' ? ' active' : ''}`}
-            onClick={() => onChangeFilter('done')}
-          >
-            완료
-          </button>
-        </div>
+        <Segmented<TodoFilter>
+          className="todo-filter-segmented"
+          value={filter}
+          onChange={(value) => onChangeFilter(value)}
+          options={[
+            { label: '전체', value: 'all' },
+            { label: '진행중', value: 'active' },
+            { label: '완료', value: 'done' },
+          ]}
+        />
 
-        <button
-          type="button"
-          className="danger-button"
-          onClick={onClearOpenTodos}
-          disabled={openCount === 0}
-        >
-          열린 작업 삭제
-        </button>
+        {openCount > 0 ? (
+          <Button danger onClick={onClearOpenTodos} size="large">
+            작업 일괄 삭제
+          </Button>
+        ) : null}
+
       </div>
     </div>
   )

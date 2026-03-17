@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import 'antd/dist/reset.css'
 import './app/styles/index.css'
 import App from './app/App'
 
