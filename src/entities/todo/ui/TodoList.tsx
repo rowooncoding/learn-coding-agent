@@ -2,8 +2,8 @@ import type { Todo } from '../model/store'
 
 type TodoListProps = {
   todos: Todo[]
-  onToggleTodo: (id: number) => void
-  onRemoveTodo: (id: number) => void
+  onToggleTodo: (id: string) => void
+  onRemoveTodo: (id: string) => void
 }
 
 function TodoList({ todos, onToggleTodo, onRemoveTodo }: TodoListProps) {

@@ -1,8 +1,14 @@
 import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
+import {
+  createTodo,
+  deleteOpenTodos,
+  deleteTodo,
+  subscribeTodos,
+  updateTodoDone,
+} from '../api/todos'
 
 export type Todo = {
-  id: number
+  id: string
   title: string
   done: boolean
 }
@@ -13,19 +19,16 @@ type TodoStore = {
   todos: Todo[]
   draft: string
   filter: TodoFilter
+  isLoading: boolean
+  hasLoaded: boolean
   setDraft: (draft: string) => void
   setFilter: (filter: TodoFilter) => void
-  addTodo: () => void
-  toggleTodo: (id: number) => void
-  removeTodo: (id: number) => void
-  clearOpenTodos: () => void
+  startTodosSubscription: () => () => void
+  addTodo: () => Promise<void>
+  toggleTodo: (id: string) => Promise<void>
+  removeTodo: (id: string) => Promise<void>
+  clearOpenTodos: () => Promise<void>
 }
-
-const initialTodos: Todo[] = [
-  { id: 1, title: '첫 번째 할 일 추가하기', done: false },
-  { id: 2, title: '끝난 항목 체크해보기', done: false },
-  { id: 3, title: '필요 없는 항목 삭제하기', done: true },
-]
 
 export const getVisibleTodos = (todos: Todo[], filter: TodoFilter) => {
   if (filter === 'active') {
@@ -54,53 +57,46 @@ export const getFilterLabel = (filter: TodoFilter) => {
   return 'All tasks'
 }
 
-export const useTodoStore = create<TodoStore>()(
-  persist(
-    (set, get) => ({
-      todos: initialTodos,
-      draft: '',
-      filter: 'all',
-      setDraft: (draft) => set({ draft }),
-      setFilter: (filter) => set({ filter }),
-      addTodo: () => {
-        const title = get().draft.trim()
-        if (!title) {
-          return
-        }
+export const useTodoStore = create<TodoStore>()((set, get) => ({
+  todos: [],
+  draft: '',
+  filter: 'all',
+  isLoading: true,
+  hasLoaded: false,
+  setDraft: (draft) => set({ draft }),
+  setFilter: (filter) => set({ filter }),
+  startTodosSubscription: () => {
+    set({ isLoading: true })
 
-        set((state) => ({
-          draft: '',
-          todos: [
-            {
-              id: Date.now(),
-              title,
-              done: false,
-            },
-            ...state.todos,
-          ],
-        }))
-      },
-      toggleTodo: (id) =>
-        set((state) => ({
-          todos: state.todos.map((todo) =>
-            todo.id === id ? { ...todo, done: !todo.done } : todo,
-          ),
-        })),
-      removeTodo: (id) =>
-        set((state) => ({
-          todos: state.todos.filter((todo) => todo.id !== id),
-        })),
-      clearOpenTodos: () =>
-        set((state) => ({
-          todos: state.todos.filter((todo) => todo.done),
-        })),
-    }),
-    {
-      name: 'todo-store',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        todos: state.todos,
-      }),
-    },
-  ),
-)
+    return subscribeTodos((todos) => {
+      set({
+        todos,
+        isLoading: false,
+        hasLoaded: true,
+      })
+    })
+  },
+  addTodo: async () => {
+    const title = get().draft.trim()
+    if (!title) {
+      return
+    }
+
+    await createTodo(title)
+    set({ draft: '' })
+  },
+  toggleTodo: async (id) => {
+    const todo = get().todos.find((currentTodo) => currentTodo.id === id)
+    if (!todo) {
+      return
+    }
+
+    await updateTodoDone(id, !todo.done)
+  },
+  removeTodo: async (id) => {
+    await deleteTodo(id)
+  },
+  clearOpenTodos: async () => {
+    await deleteOpenTodos(get().todos)
+  },
+}))

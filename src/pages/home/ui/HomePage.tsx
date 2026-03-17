@@ -24,12 +24,12 @@ function HomePage() {
   const openCount = getOpenCount(todos)
   const visibleTodos = getVisibleTodos(todos, filter)
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    addTodo()
+    await addTodo()
   }
 
-  const handleClearOpenTodos = () => {
+  const handleClearOpenTodos = async () => {
     if (openCount === 0) {
       return
     }
@@ -42,7 +42,7 @@ function HomePage() {
       return
     }
 
-    clearOpenTodos()
+    await clearOpenTodos()
   }
 
   return (
