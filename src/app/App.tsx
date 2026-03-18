@@ -2,6 +2,7 @@ import { App as AntApp, ConfigProvider } from 'antd'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import AppLayout from '../widgets/app-layout/ui/AppLayout'
 import CalendarPage from '../pages/calendar/ui/CalendarPage'
+import DashboardPage from '../pages/dashboard/ui/DashboardPage'
 import HomePage from '../pages/home/ui/HomePage'
 import LoginPage from '../pages/login/ui/LoginPage'
 import { AuthProvider } from '../shared/auth/model/AuthProvider'
@@ -30,6 +31,7 @@ function App() {
 
               <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
+                  <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/todo" element={<HomePage />} />
                   <Route path="/calendar" element={<CalendarPage />} />
                 </Route>

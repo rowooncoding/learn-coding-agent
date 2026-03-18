@@ -398,6 +398,172 @@
   }
 }
 
+/* ── Dashboard ─────────────────────────────────── */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.dashboard-left {
+  display: grid;
+  gap: 20px;
+}
+
+.dashboard-panel {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.4), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(246, 249, 255, 0.8));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+  padding: 28px;
+}
+
+.dashboard-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.42), transparent 46%);
+  pointer-events: none;
+}
+
+.dashboard-panel-header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px;
+}
+
+.dashboard-panel-header h2 {
+  margin: 4px 0 0;
+}
+
+.dashboard-todo {
+  padding: 30px;
+}
+
+/* Weekly Calendar */
+
+.weekly-calendar {
+  position: relative;
+  z-index: 1;
+}
+
+.weekly-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.weekly-calendar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  transition: background-color 0.18s ease;
+}
+
+.weekly-calendar-col.is-today {
+  border-color: rgba(96, 165, 250, 0.38);
+  background: rgba(37, 99, 235, 0.07);
+}
+
+.weekly-calendar-day-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.weekly-calendar-date {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.weekly-calendar-date.is-today {
+  background: #2563eb;
+  color: #fff;
+}
+
+.weekly-calendar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.weekly-calendar-chip {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-radius: 8px;
+  padding: 3px 6px;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--accent-strong);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.weekly-calendar-more {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  padding: 2px 0;
+}
+
+/* 가계부 placeholder */
+
+.dashboard-ledger-placeholder {
+  position: relative;
+  z-index: 1;
+  border: 1px dashed rgba(148, 163, 184, 0.3);
+  border-radius: 20px;
+  padding: 28px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.36);
+}
+
+.dashboard-ledger-placeholder p {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.dashboard-ledger-placeholder span {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+@media (max-width: 860px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Login ─────────────────────────────────────── */
+
 .login-shell {
   min-height: 100vh;
   display: grid;

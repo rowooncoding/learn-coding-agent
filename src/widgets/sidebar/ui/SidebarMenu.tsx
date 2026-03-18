@@ -89,6 +89,10 @@ function SidebarMenu({
           </div>
 
           <nav className="sidebar-nav" aria-label="주요 메뉴">
+            <NavLink to="/dashboard" end className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>
+              <span>대시보드</span>
+              <em>Home</em>
+            </NavLink>
             <NavLink to="/todo" end className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>
               <span>오늘 할 일</span>
               <em>{openCount}</em>

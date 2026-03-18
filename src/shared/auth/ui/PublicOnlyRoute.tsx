@@ -9,7 +9,7 @@ function PublicOnlyRoute() {
   }
 
   if (user) {
-    return <Navigate to="/todo" replace />
+    return <Navigate to="/dashboard" replace />
   }
 
   return <Outlet />
