@@ -1,6 +1,7 @@
 import { Button, Modal } from 'antd'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import TodoComposer from '../../../features/todo-create/ui/TodoComposer'
 import TodoHeader from '../../../features/todo-filter/ui/TodoHeader'
 import TodoList from '../../../entities/todo/ui/TodoList'
@@ -63,6 +64,9 @@ function DashboardPage() {
         {/* 왼쪽: 주간 캘린더 + 가계부 */}
         <div className="dashboard-left">
           <div className="dashboard-panel">
+            <Link to="/calendar" className="dashboard-shortcut" aria-label="캘린더 전체 보기">
+              ↗
+            </Link>
             <div className="dashboard-panel-header">
               <p className="section-kicker">이번 주</p>
               <h2>주간 캘린더</h2>
@@ -84,6 +88,9 @@ function DashboardPage() {
 
         {/* 오른쪽: 오늘 할 일 */}
         <div className="todo-panel dashboard-todo">
+          <Link to="/todo" className="dashboard-shortcut" aria-label="할 일 전체 보기">
+            ↗
+          </Link>
           <TodoHeader
             filter={filter}
             openCount={openCount}

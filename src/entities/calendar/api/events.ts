@@ -2,23 +2,43 @@ import { FirebaseError } from 'firebase/app'
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
 } from 'firebase/firestore'
 import { db } from '../../../shared/config/firebase'
 
 export type CalendarEvent = {
   id: string
   title: string
+  content: string
   dateKey: string
+  allDay: boolean
+  startTime: string
+  endTime: string
   createdAt: number
 }
 
 type FirestoreCalendarEvent = {
   title: string
+  content: string
   dateKey: string
+  allDay: boolean
+  startTime: string
+  endTime: string
   createdAt: number
+}
+
+export type NewCalendarEventPayload = {
+  title: string
+  content: string
+  dateKey: string
+  allDay: boolean
+  startTime: string
+  endTime: string
 }
 
 const FIRESTORE_TIMEOUT_MS = 10000
@@ -71,7 +91,11 @@ export const subscribeCalendarEvents = (
         return {
           id: eventDoc.id,
           title: data.title,
+          content: data.content ?? '',
           dateKey: data.dateKey,
+          allDay: data.allDay ?? true,
+          startTime: data.startTime ?? '',
+          endTime: data.endTime ?? '',
           createdAt: data.createdAt,
         }
       })
@@ -82,14 +106,57 @@ export const subscribeCalendarEvents = (
 
 export const createCalendarEvent = async (
   userId: string,
-  title: string,
-  dateKey: string,
+  payload: NewCalendarEventPayload,
 ) => {
   await withFirestoreTimeout(
     addDoc(getCalendarEventsCollection(userId), {
-      title,
-      dateKey,
+      ...payload,
       createdAt: Date.now(),
     }),
+  )
+}
+
+export type UpdateCalendarEventPayload = {
+  title: string
+  content: string
+  allDay: boolean
+  startTime: string
+  endTime: string
+}
+
+export const updateCalendarEvent = async (
+  userId: string,
+  eventId: string,
+  payload: UpdateCalendarEventPayload,
+) => {
+  await withFirestoreTimeout(
+    updateDoc(doc(db, 'users', userId, 'calendarEvents', eventId), {
+      ...payload,
+    }).catch((error) => {
+      throw mapFirestoreError(error)
+    }),
+  )
+}
+
+export const deleteCalendarEvent = async (userId: string, eventId: string) => {
+  await withFirestoreTimeout(
+    deleteDoc(doc(db, 'users', userId, 'calendarEvents', eventId)).catch((error) => {
+      throw mapFirestoreError(error)
+    }),
+  )
+}
+
+export const deleteCalendarEventsByDate = async (
+  userId: string,
+  events: CalendarEvent[],
+) => {
+  await withFirestoreTimeout(
+    Promise.all(
+      events.map((event) =>
+        deleteDoc(doc(db, 'users', userId, 'calendarEvents', event.id)).catch((error) => {
+          throw mapFirestoreError(error)
+        }),
+      ),
+    ),
   )
 }
